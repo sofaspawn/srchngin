@@ -36,7 +36,7 @@ impl Corpus{
                     Some(x) => find = x.as_str(),
                     None => ()
                 };
-                tokens.push(find.to_string());
+                tokens.push(find.to_string().to_ascii_lowercase());
             }
         }
         tokens
@@ -54,5 +54,21 @@ fn main() {
     let dir_name = "./text-files/";
     let corpus = Corpus::new(dir_name.to_string());
 
-    println!("{:#?}", corpus.get_tokens_from_file("agatha_complete.txt").len());
+    //println!("{:#?}", corpus.get_tokens_from_file("agatha_complete.txt").len());
+
+    let term = "murders";
+    println!("term frequency of {term} is: {}", term_frequency(term.to_string(),&corpus.get_tokens_from_file("agatha_complete.txt")));
+}
+
+
+fn term_frequency(term: String, tokens: &Vec<String>)->f32{
+    let mut tf = 0.0;
+    let mut tocc = 0.0;
+    for token in tokens{
+        if term.to_ascii_lowercase()==*token{
+            tocc+=1.0;
+        }
+    }
+    tf = tocc/tokens.len() as f32;
+    tf
 }
