@@ -5,5 +5,5 @@
 # TODO:
 - [x] read data from all files in a given dir
 - [x] tokenize the contents of the files
-- [ ] create a mapping of file -> tokens
+- [x] create a mapping of file -> tokens
 - [ ] implement TF-IDF for search algorithm
