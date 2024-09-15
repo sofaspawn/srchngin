@@ -1,20 +1,28 @@
 use std::fs;
+use regex::Regex;
 
-fn read_files()->Vec<String>{
+fn gen_corpus()->Vec<Vec<String>>{
     let paths = fs::read_dir("./text-files").unwrap();
-    let mut texts: Vec<String> = Vec::new();
+    let mut corpus: Vec<Vec<String>> = Vec::new();
 
     for path in paths{
         let text = fs::read_to_string(path.unwrap().path()).unwrap();
-        texts.push(text);
+        corpus.push(tokenize(&text));
+        break;
     }
 
-    texts
+    corpus
+}
+
+fn tokenize(text: &String) -> Vec<String>{
+    let tokens : Vec<String> = Vec::new();
+    let re = Regex::new(r"[\w]+").unwrap();
+    let m = re.find(&text.split("\n").collect::<Vec<&str>>()[0]).unwrap();
+    println!("{:#?}", m);
+    tokens
 }
 
 fn main() {
-    let texts = read_files();
-    for text in texts{
-        println!("{}",text);
-    }
+    let tokens = gen_corpus();
+    println!("{:#?}", tokens);
 }
