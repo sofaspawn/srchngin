@@ -7,4 +7,3 @@
 - [ ] tokenize the contents of the files
 - [ ] create a mapping of file -> tokens
 - [ ] implement TF-IDF for search algorithm
-- [ ] 
