@@ -48,6 +48,21 @@ impl Corpus{
         let ret_tokens = self.tokenize(&text);
         ret_tokens
     }
+    fn term_frequency(&self, term: String, filename: &str)->f32{
+        let mut tocc = 0.0;
+        let tokens = self.get_tokens_from_file(filename);
+        for token in &tokens{
+            if term.to_ascii_lowercase()==*token{
+                tocc+=1.0;
+            }
+        }
+        let tf = tocc/tokens.len() as f32;
+        tf
+    }
+
+    fn tfidf(){
+
+    }
 }
 
 fn main() {
@@ -56,19 +71,7 @@ fn main() {
 
     //println!("{:#?}", corpus.get_tokens_from_file("agatha_complete.txt").len());
 
-    let term = "murders";
-    println!("term frequency of {term} is: {}", term_frequency(term.to_string(),&corpus.get_tokens_from_file("agatha_complete.txt")));
-}
-
-
-fn term_frequency(term: String, tokens: &Vec<String>)->f32{
-    let mut tf = 0.0;
-    let mut tocc = 0.0;
-    for token in tokens{
-        if term.to_ascii_lowercase()==*token{
-            tocc+=1.0;
-        }
-    }
-    tf = tocc/tokens.len() as f32;
-    tf
+    let term = "curious";
+    println!("term frequency of \"{term}\" is: {}", corpus.term_frequency(term.to_string(), "long.txt"));
+    println!("{:#?}", corpus.get_tokens_from_file("long.txt"));
 }
