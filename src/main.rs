@@ -1,4 +1,5 @@
 use std::{collections::HashMap, fs};
+use std::cmp;
 use regex::Regex;
 
 struct Corpus{
@@ -82,10 +83,13 @@ impl Corpus{
         }
 
         self.tfidf = tfidf.clone();
+        self.sort_by_relevance();
     }
 
-    fn _sort_by_relevance(&self){
+    fn sort_by_relevance(&self){
         let tfidf = &self.tfidf;
+        let sorted = tfidf.iter().collect::<Vec<_>>().sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap_or(cmp::Ordering::Equal));
+        println!("{:#?}", sorted);
     }
 }
 
@@ -93,5 +97,5 @@ fn main() {
     let dir_name = "./text-files/";
     let mut corpus = Corpus::new(dir_name.to_string());
     corpus.tfidf(String::from("a"));
-    println!("{:#?}", corpus.tfidf);
+    //println!("{:#?}", corpus.tfidf);
 }
