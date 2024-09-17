@@ -48,20 +48,38 @@ impl Corpus{
         let ret_tokens = self.tokenize(&text);
         ret_tokens
     }
-    fn term_frequency(&self, term: String, filename: &str)->f32{
-        let mut tocc = 0.0;
-        let tokens = self.get_tokens_from_file(filename);
-        for token in &tokens{
-            if term.to_ascii_lowercase()==*token{
-                tocc+=1.0;
+
+    fn tfidf(&self, term: String)->HashMap<String, f32>{
+        let corpus = self.gen_corpus();
+        //tf
+        let mut term_frequencies = HashMap::new();
+        let mut tcount = 0;
+        for (file, tokens) in corpus{
+            for token in &tokens{
+                if *token==term{
+                    tcount+=1;
+                }
+            }
+            let tf = (tcount as f32)/(tokens.len() as f32);
+            term_frequencies.entry(file).or_insert(tf);
+        }
+
+        //idf
+        let mut docs_containing_term = 0;
+        for val in term_frequencies.values(){
+            if *val != 0.0{
+                docs_containing_term+=1;
             }
         }
-        let tf = tocc/tokens.len() as f32;
-        tf
-    }
 
-    fn tfidf(){
+        let idf = f32::log((term_frequencies.len() as f32 / docs_containing_term as f32), 10.0);
 
+        let mut tfidf = term_frequencies.clone();
+        for (k, v) in term_frequencies{
+            tfidf.insert(k, v*idf);
+        }
+
+        return tfidf.clone();
     }
 }
 
@@ -69,9 +87,5 @@ fn main() {
     let dir_name = "./text-files/";
     let corpus = Corpus::new(dir_name.to_string());
 
-    //println!("{:#?}", corpus.get_tokens_from_file("agatha_complete.txt").len());
-
-    let term = "curious";
-    println!("term frequency of \"{term}\" is: {}", corpus.term_frequency(term.to_string(), "long.txt"));
-    println!("{:#?}", corpus.get_tokens_from_file("long.txt"));
+    println!("{:#?}", corpus.tfidf(String::from("a")));
 }
