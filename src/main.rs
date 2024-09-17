@@ -3,12 +3,14 @@ use regex::Regex;
 
 struct Corpus{
     dir: String,
+    tfidf: HashMap<String, f64>
 }
 
 impl Corpus{
     fn new(dir_name: String)->Self{
         Corpus{
-            dir:dir_name
+            dir:dir_name,
+            tfidf: HashMap::new()
         }
     }
 
@@ -42,14 +44,14 @@ impl Corpus{
         tokens
     }
     
-    fn get_tokens_from_file(&self, filename: &str)->Vec<String>{
+    fn _get_tokens_from_file(&self, filename: &str)->Vec<String>{
         let fd = self.dir.clone()+filename;
         let text = fs::read_to_string(fd).unwrap();
         let ret_tokens = self.tokenize(&text);
         ret_tokens
     }
 
-    fn tfidf(&self, term: String)->HashMap<String, f32>{
+    fn tfidf(&mut self, term: String){
         let corpus = self.gen_corpus();
         //tf
         let mut term_frequencies = HashMap::new();
@@ -60,7 +62,7 @@ impl Corpus{
                     tcount+=1;
                 }
             }
-            let tf = (tcount as f32)/(tokens.len() as f32);
+            let tf = (tcount as f64)/(tokens.len() as f64);
             term_frequencies.entry(file).or_insert(tf);
         }
 
@@ -72,20 +74,24 @@ impl Corpus{
             }
         }
 
-        let idf = f32::log((term_frequencies.len() as f32 / docs_containing_term as f32), 10.0);
+        let idf = (term_frequencies.len() as f64 / docs_containing_term as f64).ln();
 
         let mut tfidf = term_frequencies.clone();
         for (k, v) in term_frequencies{
             tfidf.insert(k, v*idf);
         }
 
-        return tfidf.clone();
+        self.tfidf = tfidf.clone();
+    }
+
+    fn _sort_by_relevance(&self){
+        let tfidf = &self.tfidf;
     }
 }
 
 fn main() {
     let dir_name = "./text-files/";
-    let corpus = Corpus::new(dir_name.to_string());
-
-    println!("{:#?}", corpus.tfidf(String::from("a")));
+    let mut corpus = Corpus::new(dir_name.to_string());
+    corpus.tfidf(String::from("a"));
+    println!("{:#?}", corpus.tfidf);
 }
